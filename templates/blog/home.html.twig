@@ -1,0 +1,45 @@
+{% extends "base.html.twig" %}
+
+{# ce block 'title' fait référence au block 'title' déclare dans base.html.twig #}
+{% block title %}
+    Template Home
+{% endblock %}
+
+{# ce block body fait référence au block 'body' déclare dans base.html.twig #}
+{% block body %}
+
+    {# 
+    title est une variable twig qui ne sort pas de null part, elle provient du controller BlogController et plus précisement de la méthode render définit dans la méthode home()
+
+    Tous ce qui traite dans les template vient forcement d'un controller
+
+    TWIG est un langage de rendu, un moteur de template :
+    - simplicité du langage
+    - Absence de PHP au sein de l'affichages
+    - Plus simple pour un intégrateur
+    - Plus rapide à l'execution
+
+    {{}} --> interpolation
+    {% %} --> commande (cmd ex: if/else | for/endfor)
+    #}
+
+    <h1 class="text-center my-5">{{ title }}</h1>
+
+    {#     25    #}
+    {% if age > 18%}
+        <p>Tu es majeur !</p>
+    {% else %}
+        <p>Tu es mineur !</p>
+    {% endif %}
+
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae, dolorum! Dolore eaque voluptatibus, nulla iure, pariatur neque fuga porro, ut corporis delectus deleniti. Quas quaerat iure perspiciatis illum quae aliquid suscipit quidem pariatur. Officia repellendus, sequi provident ipsa aperiam illo dolorem nostrum sed ut alias placeat nisi quibusdam libero unde obcaecati. Maiores facere hic quod accusantium molestias, ea itaque! In consequatur incidunt aspernatur cupiditate perspiciatis quis rem repellat quae blanditiis vel rerum sunt, maxime aliquam vero. Natus, voluptatem ratione adipisci nam aut modi sapiente exercitationem non quia! Corporis ab inventore iste excepturi esse voluptatibus alias iusto, commodi sunt harum! Sequi.</p>
+
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae, dolorum! Dolore eaque voluptatibus, nulla iure, pariatur neque fuga porro, ut corporis delectus deleniti. Quas quaerat iure perspiciatis illum quae aliquid suscipit quidem pariatur. Officia repellendus, sequi provident ipsa aperiam illo dolorem nostrum sed ut alias placeat nisi quibusdam libero unde obcaecati. Maiores facere hic quod accusantium molestias, ea itaque! In consequatur incidunt aspernatur cupiditate perspiciatis quis rem repellat quae blanditiis vel rerum sunt, maxime aliquam vero. Natus, voluptatem ratione adipisci nam aut modi sapiente exercitationem non quia! Corporis ab inventore iste excepturi esse voluptatibus alias iusto, commodi sunt harum! Sequi.</p>
+
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae, dolorum! Dolore eaque voluptatibus, nulla iure, pariatur neque fuga porro, ut corporis delectus deleniti. Quas quaerat iure perspiciatis illum quae aliquid suscipit quidem pariatur. Officia repellendus, sequi provident ipsa aperiam illo dolorem nostrum sed ut alias placeat nisi quibusdam libero unde obcaecati. Maiores facere hic quod accusantium molestias, ea itaque! In consequatur incidunt aspernatur cupiditate perspiciatis quis rem repellat quae blanditiis vel rerum sunt, maxime aliquam vero. Natus, voluptatem ratione adipisci nam aut modi sapiente exercitationem non quia! Corporis ab inventore iste excepturi esse voluptatibus alias iusto, commodi sunt harum! Sequi.</p>
+
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae, dolorum! Dolore eaque voluptatibus, nulla iure, pariatur neque fuga porro, ut corporis delectus deleniti. Quas quaerat iure perspiciatis illum quae aliquid suscipit quidem pariatur. Officia repellendus, sequi provident ipsa aperiam illo dolorem nostrum sed ut alias placeat nisi quibusdam libero unde obcaecati. Maiores facere hic quod accusantium molestias, ea itaque! In consequatur incidunt aspernatur cupiditate perspiciatis quis rem repellat quae blanditiis vel rerum sunt, maxime aliquam vero. Natus, voluptatem ratione adipisci nam aut modi sapiente exercitationem non quia! Corporis ab inventore iste excepturi esse voluptatibus alias iusto, commodi sunt harum! Sequi.</p>
+
+
+{% endblock %}
+
