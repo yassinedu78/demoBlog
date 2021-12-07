@@ -8,27 +8,26 @@
     
     <h1 class="text-center my-5">Détails de l'article</h1>
 
+    {# cet objet 'article' ne sort pas de null part, c'est ce que le controller a transmit au template, c'est à dire les informations d'1 article selectionné en BDD en fonction de l'ID transmit dans l'URL #}
+    {# {{ dump(article) }} #}
+
         <div class="col-md-12">
             <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
                 <div class="col p-4 d-flex flex-column position-static">
-                    <strong class="d-inline-block mb-2 text-success">Design</strong>
-                    <h3 class="mb-0">Post title</h3>
-                    <div class="mb-1 text-muted">Nov 12</div>
+                    <strong class="d-inline-block mb-2 text-success">New word</strong>
+                    <h3 class="mb-0">{{ article.titre }}</h3>
+                    <div class="mb-1 text-muted">Publié le {{ article.date|date("d/m/Y") }} à {{ article.date|date('H:i:s') }}</div>
 
-                    <p class="card-text mb-auto">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo, deleniti. Expedita ex obcaecati blanditiis corrupti ut quod laudantium quae distinctio similique aut! Optio, voluptas dolorem. Consequuntur cum voluptas itaque eos dolore expedita veniam impedit illo totam, nostrum odio a vitae doloremque hic suscipit reprehenderit quod maiores molestias earum aperiam sint laborum! Odit nisi saepe facilis dolorum vel earum quis, accusamus totam rerum adipisci magni, in quod ipsa corporis eos, quibusdam dignissimos laborum sunt? Sapiente ab numquam eius commodi quia beatae fuga nemo, dolorem at quos hic amet quaerat inventore iusto sed, tempora doloribus perferendis eum nobis expedita natus molestiae! Itaque?</p>
-
-                    <p class="card-text mb-auto">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo, deleniti. Expedita ex obcaecati blanditiis corrupti ut quod laudantium quae distinctio similique aut! Optio, voluptas dolorem. Consequuntur cum voluptas itaque eos dolore expedita veniam impedit illo totam, nostrum odio a vitae doloremque hic suscipit reprehenderit quod maiores molestias earum aperiam sint laborum! Odit nisi saepe facilis dolorum vel earum quis, accusamus totam rerum adipisci magni, in quod ipsa corporis eos, quibusdam dignissimos laborum sunt? Sapiente ab numquam eius commodi quia beatae fuga nemo, dolorem at quos hic amet quaerat inventore iusto sed, tempora doloribus perferendis eum nobis expedita natus molestiae! Itaque?</p>
-
-                    <p class="card-text mb-auto">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo, deleniti. Expedita ex obcaecati blanditiis corrupti ut quod laudantium quae distinctio similique aut! Optio, voluptas dolorem. Consequuntur cum voluptas itaque eos dolore expedita veniam impedit illo totam, nostrum odio a vitae doloremque hic suscipit reprehenderit quod maiores molestias earum aperiam sint laborum! Odit nisi saepe facilis dolorum vel earum quis, accusamus totam rerum adipisci magni, in quod ipsa corporis eos, quibusdam dignissimos laborum sunt? Sapiente ab numquam eius commodi quia beatae fuga nemo, dolorem at quos hic amet quaerat inventore iusto sed, tempora doloribus perferendis eum nobis expedita natus molestiae! Itaque?</p>
+                    <p class="card-text mb-auto">{{ article.contenu }}</p>
 
                     <p class="mt-3">
-                        <a href="#" class="btn btn-dark">Modifier</a>
+                        <a href="{{path}}" class="btn btn-dark">Modifier</a>
                         <a href="#" class="btn btn-dark">Imprimer</a>
                     </p>
                     </div>
                     <div class="col-auto d-none d-lg-block">
                     
-                    <img src="https://picsum.photos/id/239/300/600" alt="">
+                    <img src="{{ article.photo|replace({'300/600': '250/250'}) }}" alt="{{ article.titre }}">
 
                 </div>
             </div>
