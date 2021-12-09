@@ -1,0 +1,49 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+    BlogSymfony | Gestion des articles
+{% endblock %}
+
+{% block body %}
+    
+    <table class="table table-striped">
+        <tr>
+        {# colonnes : objet (BackOfficeController) qui contient tout les noms des champs/colonnes de la table sql Article #}
+        {% for data in colonnes %}
+
+            {# on exclu la colonne 'id' #}
+            {% if data != 'id' %}
+                
+                {# capitalize : filtre Twig permettant de mettre la 1ère de la chaine de caractères en majuscule #}
+                <th class="text-center">{{ data|capitalize }}</th>
+
+            {% endif %}
+
+        {% endfor %}
+            <th>Cat.</th>
+            <th>Nb Comm.</th>
+            <th>Action</th>    
+        </tr>
+        
+            {% for data in tableau %}
+
+                {% if data != 'id' %}
+                <tr>
+                    <td>{{ data.titre }}</td>
+                    <td>{{ data.contenu|slice(0, 100)|striptags }}[...]</td>
+                    <td><img src="{{ asset('upload/photo/data.photo') }}"></td>
+                    <td>{{ data.date|date("d/m/Y")}} {{ data.date|date("H:i:s")}}</td>
+                    <td>{{ data.category.titre }}</td>
+                    <td>{{ data.comments|length }}</td>
+                    <td>
+                    <button><i class="bi bi-pencil-fill bg-success"></i></button>
+                    <button><i class="bi bi-pencil-fill bg-danger"></i></button>
+                    </td>
+                </tr>    
+                {% endif %}
+                
+            {% endfor %}
+        
+    </table>
+
+{% endblock %}
