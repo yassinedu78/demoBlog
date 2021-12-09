@@ -8,6 +8,15 @@
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
+    {# On affiche les messages utilisateur stockés en session (addFlash) #}
+    {% for message in app.flashes('success') %}
+
+        <div class="col-5 bg-success text-center text-white p-3 mx-auto">
+        {{ message }}
+        </div>
+        
+    {% endfor %}
+
     <h1 class="h3 mb-3 font-weight-normal text-center">Identifiez-vous</h1>
 
 

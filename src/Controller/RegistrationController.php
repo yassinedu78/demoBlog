@@ -16,9 +16,19 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
+
+          // Si getUser() est null, et ne renvoi aucune données, cela veut dire que l'internaute n'est pas authentifié, il n'a rien à faire sur la route '/login', on le redirige vers la route de connexion '/blog'
+          if($this->getUser())
+          {
+              return $this->redirectToRoute('blog');
+          }
+  
+
         $user = new User();
 
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationFormType::class, $user, [
+            'userRegistration' => true // on précise dans quelle condition on entre dans la classe RegistrationFormType pour afficher un formulaire en particulier, la classe contient plusieurs formulaire
+        ]);
 
         $form->handleRequest($request);
 
@@ -47,6 +57,62 @@ class RegistrationController extends AbstractController
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
+        ]);
+    }
+
+    /*
+        Exo : créer une page profil affichant les données de l'utilisateur authentifié
+        1. Créer une nouvelle route '/profil'
+        2. Créer une nouvelle méthode userProfil()
+        3. Cette méthode renvoi un template 'registration/profil.html.twig'
+        4. Afficher dans ce template les informations de l'utilisateur connecté 
+    */
+
+    #[Route('/profil', name: 'app_profil')]
+    public function userProfil(): Response
+    {
+        // Si getUser() est null, et ne renvoi aucune données, cela veut dire que l'internaute n'est pas authentifié, il n'a rien à faire sur la route '/profil', on le redirige vers la route de connexion '/login'
+        if(!$this->getUser())
+        {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // retourne un objet App/Entity/User contenant les informations de l'utilisateur authentifié sur le site, ces données sont stockés dans le fichier de session de l'utilisateur
+        $user = $this->getUser();
+
+        return $this->render('registration/profil.html.twig', [
+            'user' => $user
+        ]);
+    }
+
+    # Méthode permettant de modifier les informations de l'utilisateur en BDD (sauf le mdp)
+    #[Route('/profil/{id}/edit', name: 'app_profil_edit')]
+    public function userProfilEdit(User $user, Request $request, EntityManagerInterface $manager): Response
+    {
+        // dd($user);
+
+        $formUpdate = $this->createForm(RegistrationFormType::class, $user, [
+            'userUpdate' => true
+        ]);
+
+        // $user->setPrenom($_POST['prenom'])
+        $formUpdate->handleRequest($request);
+
+        if($formUpdate->isSubmitted() && $formUpdate->isValid())
+        {
+            // dd($user);
+
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash('success', "Vous avez modifié vos informations, merci de vous authentifié à nouveau.");
+
+            // Une fois que l'utilisateur à modifié ses informations de profil, on le redirige vers la route de deconnexion, on le deconnecte pour qu'il puisse après mettre à jour la session en s'authentifiant de nouveau
+            return $this->redirectToRoute('app_logout');
+        }
+
+        return $this->render('registration/profil_edit.html.twig', [
+            'formUpdate' => $formUpdate->createView()
         ]);
     }
 }

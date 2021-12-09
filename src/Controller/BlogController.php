@@ -200,7 +200,7 @@ class BlogController extends AbstractController
         // Cette méthode mise à disposition retourne un objet App\Entity\Article contenant tout les données de l'utilisateur authentifié sur le site 
         $user = $this->getUser();
 
-        dd($user);
+        // dd($user);
 
         $comment = new Comment;
 
