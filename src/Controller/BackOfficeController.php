@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Entity\Category;
 use App\Form\ArticleType;
+use App\Form\CommentType;
+use App\Form\CategoryType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -156,7 +160,8 @@ class BackOfficeController extends AbstractController
 
         return $this->render('back_office/admin_article_form.html.twig', [
             'formArticle' => $formArticle->createView(),
-            'photoActuelle' => $article->getPhoto()
+            'photoActuelle' => $article->getPhoto(), // renvoi la photo de l'article pour l'afficher en cas de modification
+            'editMode' => $article->getId()
         ]);
     }
 
@@ -172,17 +177,105 @@ class BackOfficeController extends AbstractController
     */
 
     #[Route('/admin/categories', name: 'app_admin_categories')]
-    public function adminCategories(EntityManagerInterface $manager, CategoryRepository $repoCategory): Response
+    #[Route('/admin/categorie/{id}/remove', name: 'app_admin_categorie_remove')]
+    public function adminCategories(EntityManagerInterface $manager, CategoryRepository $repoCategory, Category $category = null): Response
     {
         $colonnes = $manager->getClassMetadata(Category::class)->getFieldNames();
         // dd($colonnes);
 
-        $allCategory = $repoCategory->findAll();
+        $allCategory = $repoCategory->findAll(); // SELECT * FROM category + FETCH_ALL
         // dd($allCategory);
+
+        // dd($category);
+        if($category)
+        {
+            $titreCat = $category->getTitre();
+
+            if($category->getArticles()->isEmpty())
+            {
+                $this->addFlash('success', "La categorie '$titreCat' a été supprimé avec succès.");
+
+                $manager->remove($category);
+                $manager->flush();
+            }
+            else
+            {
+                $this->addFlash('danger', "Impossible de supprimer la catégorie '$titreCat' car des articles y sont toujours associés.");
+            }
+
+            return $this->redirectToRoute('app_admin_categories');
+        }
 
         return $this->render('back_office/admin_categories.html.twig', [
             'colonnes' =>$colonnes,
             'allCategory' => $allCategory
         ]);
     }
+
+    #[Route('/admin/categorie/add', name: 'app_admin_categorie_add')]
+    #[Route('/admin/categorie/{id}/update', name: 'app_admin_categorie_update')]
+    public function adminCategorieForm(Request $request, EntityManagerInterface $manager, Category $category = null): Response
+    {
+        // dd($category);
+
+        if(!$category)
+        {
+            $category = new Category;
+        }
+
+        $formCategory = $this->createForm(CategoryType::class, $category);
+
+        $formCategory->handleRequest($request);
+
+        if($formCategory->isSubmitted() && $formCategory->isValid())
+        {
+            // dd($category);
+            if($category->getId())
+                $txt = 'modifiée';
+            else
+                $txt = 'enregistrée';    
+
+            $manager->persist($category);
+            $manager->flush();
+
+            // On stock le titre de la catégorie dans une variable afin de l'intégrer dans le message de validation
+            $titreCat = $category->getTitre();
+
+            $this->addFlash('success', "La catégorie '$titreCat' a été enregistrée avec succès.");
+        }
+        
+        return $this->render('back_office/admin_categorie_form.html.twig', [
+            'formCategory' => $formCategory->createView(),
+            'editMode' => $category->getId()
+        ]);
+    }
+    
+    /*
+        Exo : Affichage et suppression des commentaires
+        1. Création d'une nouvelle route '/admin/commentaires' (name: app_admin_commentaires)
+        2. Création d'une nouvelle méthode adminCommentaires()
+        3. Création d'un nouveau template 'admin_commentaires.html.twig'
+        4. Selectionner les noms/champs colonne de la table 'Comment' et les afficher sur le template
+        5. Selectionner l'ensemble de la table 'Comment' et afficher les données sous forme de tableau (prévoir un lien modification/suppression pour chaque commentaire)
+        6. Mettre en place 'dataTable' pour pouvoir filtrer / rechercher des commentaires
+        7. Créer une nouvelle route (sur la même méthode) '/admin/comment/{id}/remove' (name: app_admin_comment_remove)
+        8. Réaliser le traitement permettant de supprimer un commentaire dans la BDD
+    */
+
+    #[Route('/admin/commentaires', name: 'app_admin_commentaires')]
+    #[Route('/admin/commentaire/{id}/remove', name: 'app_admin_commentaire_remove')]
+    public function adminCommentaires(EntityManagerInterface $manager, CommentRepository $repoComment): Response
+    {
+        // On selectionne le nom des champs/colonnes
+        $colonnes = $manager->getClassMetadata(Comment::class)->getFieldNames();
+        // dd($colonnes);
+
+        $commentaires = $repoComment->findAll();
+        // dd($commentaires);
+        
+        return $this->render('back_office/admin_commentaires.html.twig', [
+           'colonnes' => $colonnes,
+           'commentaires' => $commentaires 
+        ]);
+    }    
 }

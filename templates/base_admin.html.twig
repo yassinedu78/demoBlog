@@ -67,34 +67,46 @@
                     <i class="bi bi-github"></i>&nbsp;
                     <span class="fs-4">BACKOFFICE</span>
                     </a>
-                <hr>
+                    <hr>
+                    {# renvoi le nom de la route définit dans le controller #}
+                    {# {{ dump(app.request.attributes.get('_route')) }} #}
+                    {# on stock le nom de la route dans une variable twig#}
+                    {% set route_name = app.request.attributes.get('_route') %}
+
                     <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
-                        <a href="{{ path('app_admin') }}" class="nav-link text-white" aria-current="page">
+                        {# on affecte la classe 'active' si la variable 'route_name' est bien égal à la route du path (route_name == 'app_admin') #}
+                        <a href="{{ path('app_admin') }}" class="nav-link text-white {% if route_name == 'app_admin' %} active {% endif %}" aria-current="page">
                         <i class="bi bi-house"></i>&nbsp;
                         Home
                         </a>
                     </li>
                     <li>
-                        <a href="{{ path('app_admin_article_add') }}" class="nav-link text-white">
+                        <a href="{{ path('app_admin_article_add') }}" class="nav-link text-white {% if route_name == 'app_admin_article_add' %} active {% endif %}">
                         <i class="bi bi-basket"></i>&nbsp;
                         Nouvel article
                         </a>
                     </li>
                     <li>
-                        <a href="{{ path('app_admin_articles') }}" class="nav-link text-white">
+                        <a href="{{ path('app_admin_articles') }}" class="nav-link text-white {% if route_name == 'app_admin_articles' %} active {% endif %}">
                         <i class="bi bi-basket"></i>&nbsp;
                         Articles
                         </a>
                     </li>
                     <li>
-                        <a href="{{ path('app_admin_categories') }}" class="nav-link text-white">
+                        <a href="{{ path('app_admin_categorie_add') }}" class="nav-link text-white {% if route_name == 'app_admin_categorie_add' %} active {% endif %}">
+                        <i class="bi bi-collection"></i>&nbsp;
+                        Nouvelle catégorie
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_admin_categories') }}" class="nav-link text-white {% if route_name == 'app_admin_categories' %} active {% endif %}">
                         <i class="bi bi-collection"></i>&nbsp;
                         Catégories
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a href="{{ path('app_admin_commentaires') }}" class="nav-link text-white {% if route_name == 'app_admin_commentaires' %} active {% endif %}">
                         <i class="bi bi-chat-left-text"></i>&nbsp;
                         Commentaires
                         </a>

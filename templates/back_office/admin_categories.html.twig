@@ -6,9 +6,17 @@
 
 {% block body %}
     
-    <h1 class="text-center">Categories</h1>
+    {% for label, messages in app.flashes(['success', 'danger']) %}
 
-    <table class="table table-striped" id="table-backoffice">
+        {% for message in messages %}
+            <div class="col-6 mx-auto text-center bg-{{ label }} p-3 text-white mb-3">
+            {{ message }}
+            </div>
+        {% endfor %}
+        
+    {% endfor %}
+
+    <table class="table table-striped" id="table-category">
         <thead>
             <tr class="tablle-success">
             {# colonnes : objet (BackOfficeController) qui contient tout les noms des champs/colonnes de la table sql Article #}
@@ -33,11 +41,17 @@
             <tr>
                 <td>{{ data.titre}}</td>
                 <td>{{ data.description}}</td>
-                <td>{{ data.articles|length }}</td>
+                <td class="text-center">{{ data.articles|length }}</td>
                 <td>
-                    <a href="" class="btn btn-primary mb-3"><i class="bi bi-bookmark-plus"></i></a>
-                    <a href="" class="btn btn-success mb-3"><i class="bi bi-pencil-fill"></i></a>
-                    <a href="" class="btn btn-danger" oneclick="return(confirm('Voulez-vous réellement supprimer l\'article n° {{ data.id }}'));"><i class="bi bi-trash-fill"></i></a>
+                    <a href="{{ path('app_admin_categorie_add') }}" class="btn btn-primary mb-3"><i class="bi bi-bookmark-plus"></i>
+                    </a>
+                    <br>
+                    <a href="{{ path('app_admin_categorie_update', {'id': data.id}) }}" class="btn btn-success mb-3"><i class="bi bi-pencil-fill"></i>
+                    </a>
+                    <br>
+                    <a href="{{ path('app_admin_categorie_remove', {'id': data.id}) }}" class="btn btn-danger" onclick="return(confirm('Voulez-vous réellement supprimer la categorie {{ data.titre }}'));">
+                    <i class="bi bi-trash-fill"></i>
+                    </a>
                 </td>
 
             </tr>

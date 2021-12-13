@@ -1,13 +1,25 @@
 {% extends "base_admin.html.twig" %}
 
 {% block title %}
-    BlogSymfony | Gestion des articles 
+    BlogSymfony |
+
+    {% if editMode %}
+        Modification article
+    {% else %}
+        Nouvel article
+    {% endif %} 
 {% endblock %}
 
 {% block body %}
 {# {{ dump(formArticle) }}  #}
 
-    <h1 class="text-center">Nouvel article</h1>
+    <h1 class="text-center">
+    {% if editMode %}
+        Modification de l'article
+    {% else %}
+        Création d'un nouvel article
+    {% endif %} 
+    </h1>
 
     {{ form_start(formArticle, {'attr': {'class': 'col-7 mx-auto'}}) }}
 
@@ -27,7 +39,13 @@
 
         {% endif %}
 
-         <button type="submit" class="btn btn-dark my-4">Enregistrer les modifications</button>
+        <button type="submit" class="btn btn-dark my-4">
+        {% if editMode %}
+            Enregistrer les modifications
+        {% else %}
+            Enregistrer
+        {% endif %} 
+         </button>
 
     {{ form_end(formArticle)}}
 

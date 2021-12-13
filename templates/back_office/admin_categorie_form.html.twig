@@ -1,0 +1,38 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+{% if editMode %}
+    Modification catégorie
+{% else %}
+    Nouvelle catégorie
+{% endif %}
+{% endblock %}
+
+{% block body %}
+    
+    <h1 class="text-center my-5">
+    {% if editMode %}
+        Modification catégorie
+    {% else %}
+        Nouvelle catégorie
+    {% endif %}
+    </h1>
+
+    {{ form_start(formCategory, {'attr': {'class': 'col-7 mx-auto'}}) }}
+
+        {{ form_row(formCategory.titre)}}
+
+        {{ form_row(formCategory.description, {'attr': {'rows' : 10}}) }}
+
+        <div class="text-center">
+        <button class="btn btn-dark">
+        {% if editMode %}
+            enregistrer les modifications
+        {% else %}    
+            Enregistrer
+        {% endif %}
+        </button>
+        </div>
+
+    {{ form_end(formCategory) }}
+{% endblock %}
