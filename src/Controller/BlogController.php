@@ -126,6 +126,8 @@ class BlogController extends AbstractController
         // handleRequest() permet d'envoyer chaque données de $_POST et de les transmettre aux bons setter de l'objet entité $article 
         $formArticle->handleRequest($request);
 
+        // dd($this->getUser());
+
         if($formArticle->isSubmitted() && $formArticle->isValid())
         {
             // Le seul setter que l'on appel de l'entité, c'est celui de la date puisqu'il n'y a pas de champ 'date' dans le formulaire
@@ -133,6 +135,11 @@ class BlogController extends AbstractController
             // Si l'article ne possède pas d'id, c'est une insertion, alors on entre dans la condition IF et on génère une date d'article
             if(!$article->getId())
                 $article->setDate(new \DateTime());
+
+            // On relie l'article publié à l'utilisateur en BDD
+            // On relie la clé étrangère dans la BDD
+            // setUser() attend en argument l'objet App/Entity/User
+            $article->setUser($this->getUser());
 
             // DEBUT TRAITEMENT DE LA PHOTO
             // On récupère toute les informations de l'image uploadé dans le formulaire
@@ -265,5 +272,12 @@ class BlogController extends AbstractController
             'article' => $article, // On transmet au template l'article selectionné en BDD afin que Twig puisse traiter et afficher les données sur la page
             'formComment' => $formComment->createView()
         ]);
-    }  
+    }
+    
+    /*
+        Exo : Le but est de relier les utilisateurs aux articles, lorsque l'internaute poste un article, il faut une relation entre Article et User
+        Créer une nouvelle propriété dans l'entité user 'article' et fait une relation OneToMany, cette propriété peut être null
+        Lorsque l'internaute poste un nouvel article, faites en sorte de renseigner la clé étrangère 'user_id' afin que l'article soit relié à l'utilisateur connecté
+        Dans la page profil de l'utilisateur, afficher dans une liste tout les articles posté par l'internaute (titre article (lien qui redirige vers l'article), date/heure et un lien pour la modification)
+    */
 }

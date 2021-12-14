@@ -1,0 +1,84 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+    BlogSymfony | Gestion des utilisateurs
+{% endblock %}
+
+{% block body %}
+
+{# {{ dump(utilisateur) }} #}
+
+    <h1 class="text-center">Gestion des utilisateurs</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="col-6 mx-auto text-center bg-success p-3 text-white mb-3">
+            {{ message }}
+        </div>
+    {% endfor %}
+    
+
+    <table class="table table-striped" id="table-utilisateur">
+        <thead>
+            <tr class="table-success">
+            {# colonnes : objet (BackOfficeController) qui contient tout les noms des champs/colonnes de la table sql Article #}
+            {% for data in titre %}
+
+                {# on exclu la colonne 'id' #}
+                {% if data != 'id' %}
+                    {% if data != 'password' %}
+
+                    {# capitalize : filtre Twig permettant de mettre la 1ère de la chaine de caractères en majuscule #}
+                    <th class="text-center">{{ data|capitalize }}</th>
+                    {% endif %}
+                {% endif %}
+
+            {% endfor %}
+                <th>Action</th>    
+            </tr>
+        </thead>
+        <tbody>
+
+        {% for data in utilisateur %}
+            
+            <tr>
+                <td>{{ data.email }}</td>
+                <td>
+                {% if data.roles.0 == 'ROLE_ADMIN' %}
+                    ADMINISTRATEUR
+                {% else %}
+                    USER    
+                {% endif %}
+                </td>
+                <td>{{ data.prenom}}</td>
+                <td>{{ data.nom }}</td>
+                <td>{{ data.adresse }}</td>
+                <td>{{ data.ville }}</td>
+                <td>{{ data.codePostal }}</td>
+
+                <td>
+                    <a href="{{ path('app_admin_utilisateur_update', {'id': data.id}) }}?op=update" class="btn btn-success mb-3"><i class="bi bi-pencil-fill"></i></a>
+
+                    <a href="{{ path('app_admin_utilisateur_remove', {'id': data.id}) }}" class="btn btn-danger mb-3" onclick="return(confirm('Voulez-vous réellement supprimer l\'utilisateur {{ data.prenom }} {{ data.nom }}'));"><i class="bi bi-trash-fill"></i></a>
+                    </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+    {# {{ dump(app.request.query) }} #}
+
+    {% if app.request.query.get('op') == 'update' %}
+        
+        {{ form_start(formUserUpdate, {'attr': {'class': 'col-2 mx-auto'}}) }}
+
+            <h5 class="mt-5">Modification {{ user.prenom }} {{ user.nom }} </h5>
+            
+            {{ form_row(formUserUpdate.roles) }}
+
+            <button class="btn btn-dark">Enregistrer</button>
+
+        {{ form_end(formUserUpdate) }}
+    {% endif %}
+
+{% endblock %}
