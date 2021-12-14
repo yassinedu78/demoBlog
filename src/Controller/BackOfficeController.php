@@ -2,15 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Category;
 use App\Form\ArticleType;
 use App\Form\CommentType;
 use App\Form\CategoryType;
+use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use App\Repository\ArticleRepository;
-use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -264,7 +267,7 @@ class BackOfficeController extends AbstractController
 
     #[Route('/admin/commentaires', name: 'app_admin_commentaires')]
     #[Route('/admin/commentaire/{id}/remove', name: 'app_admin_commentaire_remove')]
-    public function adminCommentaires(EntityManagerInterface $manager, CommentRepository $repoComment): Response
+    public function adminCommentaires(EntityManagerInterface $manager, CommentRepository $repoComment, Comment $comment = null): Response
     {
         // On selectionne le nom des champs/colonnes
         $colonnes = $manager->getClassMetadata(Comment::class)->getFieldNames();
@@ -272,10 +275,112 @@ class BackOfficeController extends AbstractController
 
         $commentaires = $repoComment->findAll();
         // dd($commentaires);
+
+        if($comment)
+        {
+            // On stock l'auteur du commentaire dans une variable afin de l'intégrer dans le message de validation
+            $auteur = $comment->getAuteur();
+
+            $manager->remove($comment);
+            $manager->flush();
+
+            $this->addFlash('success', "Le commentaire posté par $auteur a été supprimé avec succés.");
+
+            return $this->redirectToRoute('app_admin_commentaires');
+        }
         
         return $this->render('back_office/admin_commentaires.html.twig', [
            'colonnes' => $colonnes,
            'commentaires' => $commentaires 
+        ]);
+    }
+    
+    #[Route('/admin/commentaire/{id}/update', name: 'app_admin_commentaire_update')]
+    public function adminCommentaireUpdate(Comment $comment, EntityManagerInterface $manager, Request $request): Response
+    {
+        // dd($comment);
+
+        $formComment = $this->createForm(CommentType::class, $comment, [
+            'commentFormBack' => true
+        ]);
+
+        $formComment->handleRequest($request);
+
+        if($formComment->isSubmitted() && $formComment->isValid())
+        {
+            $auteur = $comment->getAuteur();
+
+            $manager->persist($comment);
+            $manager->flush();
+
+            $this->addFlash('success', "Le commentaire posté par $auteur a bien été modifié.");
+
+            return $this->redirectToRoute('app_admin_commentaires');
+        }
+
+        return $this->render('back_office/admin_commentaire_update.html.twig', [
+            'formComment' =>$formComment->createView()
+        ]);
+    }
+
+    #[Route('/admin/utilisateur', name: 'app_admin_utilisateur')]
+    #[Route('/admin/utilisateur/{id}/update', name: 'app_admin_utilisateur_update')]
+    #[Route('/admin/utilisateur/{id}/remove', name: 'app_admin_utilisateur_remove')]
+    public function adminUser(EntityManagerInterface $manager, UserRepository $repoUser, User $user = null, Request $request): Response
+    {
+        // dd($user);
+        // dd($request->query);
+
+        $titre = $manager->getClassMetaData(User::class)->getFieldNames();
+
+        $utilisateur = $repoUser->findAll();
+
+        // Si $user retourne true, cela veut que $user les informations d'1 user stocké en BDD
+        if($user)
+        {
+            // Si l'indice 'op' est définit dans l'URL et qu'il a pour valeur 'update', alors on entre dans la condition et on execute une requete 'update'
+            if($request->query->get('op') == 'update')
+            {
+                // dd('update');
+                $formUserUpdate = $this->createForm(RegistrationFormType::class, $user, [
+                    'userUpdateBack' => true
+                ]);
+
+                $formUserUpdate->handleRequest($request);
+
+                if($formUserUpdate->isSubmitted() && $formUserUpdate->isValid())
+                {
+                    $infos = $user->getPrenom() . " " . $user->getNom();
+
+                    $manager->persist($user);
+                    $manager->flush();
+
+                    $this->addFlash('success', "Le rôle de l'utilisateur $infos a été modifié avec succès.");
+
+                    return $this->redirectToRoute('app_admin_utilisateur');
+                }
+            }
+            else // Sinon, aucun paramètres dans l'URL, alors on execute une requete de suppression
+            {
+                $infos = $user->getPrenom() . " " . $user->getNom();
+
+                // dd('delete');
+                $manager->remove($user);
+                $manager->flush();
+
+                $this->addFlash('success', "Le rôle de l'utilisateur $infos a été modifié avec succès.");
+
+                return $this->redirectToRoute('app_admin_utilisateur');
+            }
+        }
+       
+
+        return $this->render('back_office/admin_utilisateur.html.twig', [
+            'titre' => $titre,
+            'utilisateur' => $utilisateur,
+            // Si l'indice dans l'URL est 'op=update' alors on execute createView() sur l'objet formUtiUpdate pour générer le formualaire, sinon on stock une chaine de caractère vide
+            'formUserUpdate' => ($request->query->get('op') == 'update') ? $formUserUpdate->createView() : '',
+            'user' => $user
         ]);
     }    
 }

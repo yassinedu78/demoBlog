@@ -5,12 +5,18 @@
 {% endblock %}
 
 {% block body %}
+
+    {% for message in app.flashes('success') %}
+        <div class="col-6 mx-auto text-center bg-success p-3 text-white mb-3">
+            {{ message }}
+        </div>
+    {% endfor %}
     
     <h1 class="text-center">Liste des Commentaires</h1>
 
     <table class="table table-striped" id="table-commentaire">
         <thead>
-            <tr class="tablle-success">
+            <tr class="table-success">
             {# colonnes : objet (BackOfficeController) qui contient tout les noms des champs/colonnes de la table sql Article #}
             {% for data in colonnes %}
 
@@ -37,7 +43,7 @@
                 <td><a href="{{ path('blog_show', {'id': data.article.id}) }}" class="link-secondary">{{ data.article.titre }}</a></td>
 
                 <td>
-                    <a href="" class="btn btn-success mb-3"><i class="bi bi-pencil-fill"></i></a>
+                    <a href="{{ path('app_admin_commentaire_update', {'id': data.id}) }}" class="btn btn-success mb-3"><i class="bi bi-pencil-fill"></i></a>
 
                     <a href="{{ path('app_admin_commentaire_remove', {'id': data.id}) }}" class="btn btn-danger" oneclick="return(confirm('Voulez-vous réellement supprimer l\'article n° {{ data.auteur }}'));"><i class="bi bi-trash-fill"></i></a>
                     </td>
